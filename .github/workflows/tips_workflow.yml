@@ -1,0 +1,33 @@
+name: Study Tips Generator
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      preview_date:
+        description: '预览日期 YYYY‑MM‑DD，留空使用真实今日'
+        required: false
+        default: ''
+  # schedule:
+  #   - cron: '17 23 * * *'  # UTC23:17 = 韩国次日08:17；去掉#开启定时
+
+jobs:
+  build:
+    runs-on: ubuntu‑latest
+    steps:
+      - name: 拉取仓库代码
+        uses: actions/checkout@v4
+
+      - name: 配置Python环境
+        uses: actions/setup‑python@v5
+        with:
+          python‑version: '3.11'
+
+      - name: 运行Python生成网页
+        run: python main.py
+        env:
+          PREVIEW_DATE: ${{ github.event.inputs.preview_date }}
+
+      - name: 部署网页到GitHub Pages
+        uses: actions/deploy‑pages@v4
